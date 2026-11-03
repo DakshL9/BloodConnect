@@ -1,0 +1,166 @@
+/* ==========================================================================
+   LifeDrop — Illustrated animated background scenes
+   Reusable across: hero (home/camps), auth pages (login/register), details
+   ========================================================================== */
+
+:root{
+  --skin-1:#FBC9AE;
+  --skin-2:#F5A981;
+  --wave-1:#F7B9C0;
+  --wave-2:#EA3349;
+  --wave-3:#B31530;
+}
+
+.bg-scene{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+.bg-scene *{ pointer-events:none; }
+
+/* content sitting above a scene must opt in */
+.scene-parent{ position:relative; isolation:isolate; overflow:hidden; }
+.scene-content{ position:relative; z-index:2; }
+
+/* ---------- faint world-dot backdrop ---------- */
+.bg-worldmap{
+  position:absolute;
+  inset:0;
+  opacity:.5;
+  background-image: radial-gradient(var(--red-100) 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 78% 30%, #000 0%, transparent 72%);
+          mask-image: radial-gradient(ellipse 70% 60% at 78% 30%, #000 0%, transparent 72%);
+}
+.bg-worldmap.left{
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 14% 40%, #000 0%, transparent 72%);
+          mask-image: radial-gradient(ellipse 60% 55% at 14% 40%, #000 0%, transparent 72%);
+}
+
+/* ---------- clouds ---------- */
+.bg-cloud{ position:absolute; opacity:.9; color:#fff; filter:drop-shadow(0 6px 10px rgba(158,17,40,.05)); }
+.bg-cloud svg{ width:100%; height:100%; display:block; }
+.cloud-drift-a{ animation: cloud-drift-a 22s ease-in-out infinite; }
+.cloud-drift-b{ animation: cloud-drift-b 26s ease-in-out infinite; }
+@keyframes cloud-drift-a{ 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(18px); } }
+@keyframes cloud-drift-b{ 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(-16px); } }
+
+/* ---------- bottom wave + leaves band ---------- */
+.bg-wave{ position:absolute; left:0; right:0; bottom:-2px; width:100%; line-height:0; }
+.bg-wave svg{ width:100%; height:auto; display:block; }
+.bg-leaf{ transform-origin:bottom center; animation: leaf-sway 5s ease-in-out infinite; }
+.bg-leaf:nth-child(odd){ animation-duration:6.5s; animation-delay:.4s; }
+.bg-leaf:nth-child(3n){ animation-duration:7.5s; animation-delay:.9s; }
+@keyframes leaf-sway{
+  0%,100%{ transform:rotate(-3deg); }
+  50%{ transform:rotate(3deg); }
+}
+.wave-caption{
+  position:absolute; left:26px; bottom:20px;
+  color:#fff; font-family:var(--font-display); font-weight:700;
+  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+  opacity:.9;
+}
+.wave-caption .hr{ width:34px; height:2px; background:#fff; opacity:.6; margin-bottom:8px; border-radius:2px; }
+
+/* ---------- script / handwritten notes ---------- */
+.bg-note{
+  position:absolute;
+  font-family:"Caveat","Poppins",cursive;
+  font-weight:700;
+  color:var(--red-600);
+  line-height:1.15;
+  font-size:1.4rem;
+  animation: note-float 5s ease-in-out infinite;
+  text-align:center;
+}
+.bg-note.alt{ color:#F2A5AE; }
+.bg-note .heart-mark{ display:inline-block; animation: soft-pulse 1.8s ease-in-out infinite; }
+@keyframes note-float{
+  0%,100%{ transform:translateY(0) rotate(var(--rot, -4deg)); }
+  50%{ transform:translateY(-8px) rotate(var(--rot, -4deg)); }
+}
+
+/* ---------- sparkle dashes near hearts ---------- */
+.bg-sparkle{ position:absolute; display:flex; gap:5px; }
+.bg-sparkle span{
+  width:3px; height:14px; border-radius:3px; background:var(--red-500);
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+.bg-sparkle span:nth-child(2){ animation-delay:.2s; height:10px; }
+.bg-sparkle span:nth-child(3){ animation-delay:.4s; height:18px; }
+@keyframes twinkle{ 0%,100%{ opacity:.35; transform:scaleY(.7); } 50%{ opacity:1; transform:scaleY(1); } }
+
+/* ---------- floating blood bag ---------- */
+.bg-bag{
+  position:absolute;
+  width:104px;
+  filter:drop-shadow(0 16px 22px rgba(158,17,40,.22));
+  animation: float-y 5.5s ease-in-out infinite;
+}
+.bg-bag svg{ width:100%; height:auto; display:block; }
+.bg-bag .bag-liquid{ animation: liquid-pulse 2.4s ease-in-out infinite; transform-origin:center; }
+@keyframes liquid-pulse{ 0%,100%{ transform:scaleY(1); } 50%{ transform:scaleY(1.03); } }
+
+/* ---------- heart-shaped drip tube ---------- */
+.bg-tube{ position:absolute; overflow:visible; }
+.bg-tube path{ fill:none; stroke:var(--red-600); stroke-width:4.5; stroke-linecap:round; }
+.bg-tube .tube-flow{
+  stroke-dasharray:10 14;
+  animation: tube-flow 1.8s linear infinite;
+}
+@keyframes tube-flow{ to{ stroke-dashoffset:-48; } }
+
+/* ---------- cupped hand cradling a drop/heart, and hand offering a drop ---------- */
+.bg-hand{
+  position:absolute;
+  width:190px;
+  filter:drop-shadow(0 18px 24px rgba(158,17,40,.16));
+  animation: float-y 6s ease-in-out infinite;
+  animation-delay:.4s;
+}
+.bg-hand svg{ width:100%; height:auto; display:block; }
+.bg-hand .cradled{ transform-origin:50% 60%; animation: soft-pulse 2.4s ease-in-out infinite; }
+.bg-hand .heartbeat{ animation: dash-move 2.6s linear infinite; stroke-dasharray:6 8; }
+@keyframes dash-move{ to{ stroke-dashoffset:-28; } }
+
+/* ---------- big soft blob glow (kept from original hero, generalised) ---------- */
+.bg-blob{
+  position:absolute;
+  border-radius:50%;
+  background: radial-gradient(circle at 55% 40%, var(--pink-100), transparent 65%);
+  filter: blur(2px);
+}
+
+@media (max-width: 860px){
+  .bg-note{ display:none; }
+  .bg-hand{ transform:scale(.62); transform-origin:bottom left; }
+  .bg-hand.drop{ transform-origin:top right; }
+  .bg-bag{ transform:scale(.6); transform-origin:top right; }
+  .bg-tube{ display:none; }
+  .bg-sparkle{ transform:scale(.7); }
+  .bg-wave svg{ height:70px; }
+}
+@media (max-width: 560px){
+  .bg-hand{ transform:scale(.42); }
+  .bg-bag{ transform:scale(.42); }
+}
+
+/* ---------- scene parents: keep real content above the illustration ---------- */
+.hero.scene-parent,
+.auth-page.scene-parent,
+.details-page.scene-parent{ position:relative; overflow:hidden; }
+.hero.scene-parent .container,
+.hero.scene-parent .hero-grid,
+.auth-page.scene-parent .auth-grid,
+.details-page.scene-parent .details-card,
+.details-page.scene-parent .back-link{ position:relative; z-index:2; }
+
+@media (prefers-reduced-motion: reduce){
+  .bg-cloud, .bg-leaf, .bg-note, .bg-bag, .bg-bag .bag-liquid,
+  .bg-tube .tube-flow, .bg-hand, .bg-hand .cradled, .bg-sparkle span{
+    animation: none !important;
+  }
+}
