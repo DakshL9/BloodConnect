@@ -1,7 +1,4 @@
-/* Shared donation camp data.
-   Used by camps.html (listing + filtering) and camp-details.html (single view). */
-
-const CAMPS = [
+export const CAMPS = [
   {
     id: "community-andheri",
     title: "Community Blood Drive",
@@ -77,7 +74,7 @@ const CAMPS = [
   {
     id: "pune-camp",
     title: "Corporate Wellness Drive",
-    org: "LifeDrop Foundation",
+    org: "BloodConnect Foundation",
     date: "2026-04-12",
     dateLabel: "Sunday, April 12, 2026",
     day: "12",
@@ -111,3 +108,4 @@ const CAMPS = [
     note: "Refreshments and donor certificates provided on-site. Walk-ins are welcome!"
   }
 ];
+
