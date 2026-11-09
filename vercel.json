@@ -1,0 +1,19 @@
+{
+    "redirects": [
+        {
+            "source": "/",
+            "destination": "/bd",
+            "permanent": false
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/bd/assets/:path*",
+            "destination": "/assets/:path*"
+        },
+        {
+            "source": "/bd/:path*",
+            "destination": "/index.html"
+        }
+    ]
+}
