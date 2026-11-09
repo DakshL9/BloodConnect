@@ -2,17 +2,17 @@
     "redirects": [
         {
             "source": "/",
-            "destination": "/bd",
+            "destination": "/bloodconnect",
             "permanent": false
         }
     ],
     "rewrites": [
         {
-            "source": "/bd/assets/:path*",
+            "source": "/bloodconnect/assets/:path*",
             "destination": "/assets/:path*"
         },
         {
-            "source": "/bd/:path*",
+            "source": "/bloodconnect/:path*",
             "destination": "/index.html"
         }
     ]

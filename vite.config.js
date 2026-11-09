@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  base: '/bd/',
+  base: '/bloodconnect/',
   plugins: [react()],
   server: {
     port: 8000,
