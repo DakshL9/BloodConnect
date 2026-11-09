@@ -7,7 +7,7 @@ import './css/bg-scene.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/bd">
       <App />
     </BrowserRouter>
   </React.StrictMode>

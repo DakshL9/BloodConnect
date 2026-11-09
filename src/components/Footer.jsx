@@ -64,13 +64,15 @@ export default function Footer({ type = 'compact' }) {
               <li><Link to="/#top">Home</Link></li>
               <li><Link to="/#about">About</Link></li>
               <li><Link to="/camps">Donation camps</Link></li>
-              <li><Link to="/#gallery">Gallery</Link></li>
+              <li><Link to="/donors">Find donors</Link></li>
+              <li><Link to="/requests">Blood requests</Link></li>
             </ul>
           </div>
           <div>
             <h4>Account</h4>
             <ul>
-              <li><Link to="/register">Register as donor</Link></li>
+              <li><Link to="/register-donor">Register as donor</Link></li>
+              <li><Link to="/request-blood">Request blood</Link></li>
               <li><Link to="/login">Sign in</Link></li>
               <li><Link to="/#contact">Contact us</Link></li>
             </ul>

@@ -4,9 +4,12 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { showToast } from '../utils/toast';
 import { initAnimations } from '../utils/animations';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { signup, user } = useAuth();
   const [formData, setFormData] = useState({
     fullName: '',
     dob: '',
@@ -53,7 +56,7 @@ export default function RegisterPage() {
     setErrors((prev) => ({ ...prev, [key]: '' }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -84,27 +87,54 @@ export default function RegisterPage() {
       return;
     }
 
-    try {
-      const donors = JSON.parse(localStorage.getItem('bloodconnect_donors') || '[]');
-      donors.push({
-        name: formData.fullName.trim(),
-        email: formData.email.trim(),
-        bloodGroup: formData.bloodGroup,
-        city: formData.city,
-        registeredAt: new Date().toISOString(),
-      });
-      localStorage.setItem('bloodconnect_donors', JSON.stringify(donors));
-    } catch (err) {
-      // Ignore localStorage in private mode
-    }
-
-    setBanner({ type: 'success', message: "You're registered! Redirecting you to sign in…" });
-    showToast('Thanks for registering as a donor!');
     setIsSubmitting(true);
+    setBanner(null);
 
-    setTimeout(() => {
-      navigate('/login');
-    }, 1300);
+    try {
+      const { data, error } = await signup(
+        formData.email.trim(),
+        formData.password,
+        formData.fullName.trim()
+      );
+
+      if (error) {
+        setBanner({ type: 'error', message: error.message || 'Failed to register account.' });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // If user session is immediately created, also save donor profile
+      if (data?.user?.id) {
+        try {
+          await supabase.from('donors').upsert({
+            user_id: data.user.id,
+            name: formData.fullName.trim(),
+            blood_group: formData.bloodGroup,
+            phone: formData.phone.trim(),
+            city: formData.city,
+            availability: true,
+            last_donated_date: formData.lastDonation || null,
+          });
+        } catch (donorErr) {
+          console.warn('Donor profile could not be auto-saved:', donorErr);
+        }
+      }
+
+      setBanner({
+        type: 'success',
+        message: data?.session
+          ? "You're registered! Redirecting to donor portal…"
+          : "Registration complete! If email confirmation is enabled, please verify your email and sign in.",
+      });
+      showToast('Thanks for registering!');
+
+      setTimeout(() => {
+        navigate(data?.session ? '/donors' : '/login');
+      }, 1200);
+    } catch (err) {
+      setBanner({ type: 'error', message: err.message || 'An unexpected error occurred.' });
+      setIsSubmitting(false);
+    }
   };
 
   return (

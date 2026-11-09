@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
+  const { user, profile, role, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navLinksRef = useRef(null);
@@ -10,6 +12,9 @@ export default function Navbar() {
   const pathname = location.pathname;
   const isHome = pathname === '/' || pathname === '/index.html';
   const isCamps = pathname === '/camps' || pathname === '/camps.html' || pathname === '/camp-details' || pathname === '/camp-details.html';
+  const isDonors = pathname === '/donors';
+  const isRequests = pathname === '/requests';
+  const isAdmin = pathname === '/admin';
   const isLogin = pathname === '/login' || pathname === '/login.html';
   const isRegister = pathname === '/register' || pathname === '/register.html';
   const isAuth = isLogin || isRegister;
@@ -96,7 +101,28 @@ export default function Navbar() {
           >
             Donation Camps
           </Link>
-          {!isAuth && (
+          <Link
+            to="/donors"
+            className={isDonors ? 'active' : ''}
+          >
+            Find Donors
+          </Link>
+          <Link
+            to="/requests"
+            className={isRequests ? 'active' : ''}
+          >
+            Blood Requests
+          </Link>
+          {role === 'admin' && (
+            <Link
+              to="/admin"
+              className={isAdmin ? 'active' : ''}
+              style={{ color: 'var(--red-600)', fontWeight: 700 }}
+            >
+              Admin
+            </Link>
+          )}
+          {!isAuth && !user && (
             <Link
               to="/#gallery"
               onClick={(e) => handleLinkClick(e, '#gallery')}
@@ -113,7 +139,23 @@ export default function Navbar() {
         </nav>
 
         <div className="nav-actions">
-          {isHome ? (
+          {user ? (
+            <>
+              <Link className="btn btn-outline btn-sm" to="/register-donor" title="Manage Donor Profile">
+                Donor Profile
+              </Link>
+              <Link className="btn btn-primary btn-sm" to="/request-blood" title="Post a Blood Request">
+                + Request
+              </Link>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => logout()}
+                title={`Signed in as ${user.email}`}
+              >
+                Logout
+              </button>
+            </>
+          ) : isHome ? (
             <>
               <Link className="btn btn-ghost btn-sm" to="/login">Login</Link>
               <Link className="btn btn-primary btn-sm" to="/register">

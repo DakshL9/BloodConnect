@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { showToast } from '../utils/toast';
 import { initAnimations } from '../utils/animations';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, user } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [errors, setErrors] = useState({});
   const [banner, setBanner] = useState(null);
@@ -21,7 +24,14 @@ export default function LoginPage() {
     return cleanup;
   }, []);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (user) {
+      const destination = location.state?.from?.pathname || '/donors';
+      navigate(destination, { replace: true });
+    }
+  }, [user, navigate, location]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -41,13 +51,28 @@ export default function LoginPage() {
       return;
     }
 
-    setBanner({ type: 'success', message: 'Signed in successfully. Redirecting to your dashboard…' });
-    showToast('Welcome back to BloodConnect!');
     setIsSubmitting(true);
+    setBanner(null);
 
-    setTimeout(() => {
-      navigate('/camps');
-    }, 1100);
+    try {
+      const { error } = await login(formData.email.trim(), formData.password);
+      if (error) {
+        setBanner({ type: 'error', message: error.message || 'Failed to sign in. Please check your credentials.' });
+        setIsSubmitting(false);
+        return;
+      }
+
+      setBanner({ type: 'success', message: 'Signed in successfully. Redirecting…' });
+      showToast('Welcome back to BloodConnect!');
+
+      setTimeout(() => {
+        const destination = location.state?.from?.pathname || '/donors';
+        navigate(destination, { replace: true });
+      }, 800);
+    } catch (err) {
+      setBanner({ type: 'error', message: err.message || 'An unexpected error occurred.' });
+      setIsSubmitting(false);
+    }
   };
 
   const handleForgotPassword = (e) => {
